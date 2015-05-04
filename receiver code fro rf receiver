@@ -1,0 +1,45 @@
+#define readPin A0
+#define ledPin 8
+int data = 0;
+const int numReadings = 10;
+int readings[numReadings];
+int index = 0;
+int total = 0;
+int average = 0;
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+  pinMode(readPin, INPUT);
+  pinMode(9, OUTPUT);
+  for (int thisReading = 0; thisReading < numReadings; thisReading++)
+    readings[thisReading] = 0;   
+}
+void loop () {
+  
+    // subtract the last reading:
+  total= total - readings[index];        
+  // read from the sensor:  
+  readings[index] = analogRead(readPin);
+  // add the reading to the total:
+  total= total + readings[index];      
+  // advance to the next position in the array:  
+  index = index + 1;                    
+  // if we're at the end of the array...
+  if (index >= numReadings)              
+    // ...wrap around to the beginning:
+    index = 0;                          
+  // calculate the average:
+  average = total / numReadings;        
+  // send it to the computer as ASCII digits
+  Serial.println(average);   
+if (average < 375 ){
+  digitalWrite(ledPin, HIGH);
+  digitalWrite(9,HIGH);
+}
+else{
+  digitalWrite(ledPin, LOW);
+  digitalWrite(9,LOW);
+}
+delay(100);
+}
